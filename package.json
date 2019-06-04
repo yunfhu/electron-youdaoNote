@@ -32,7 +32,7 @@
     "linux": {
       "category": "Network;Utility",
       "desktop": {
-        "StartupWMClass": "freechat"
+        "StartupWMClass": "YoudaoNote"
       },
       "target": [
         "AppImage",
