@@ -1,0 +1,51 @@
+{
+  "name": "electron-youdaoNote",
+  "productName": "YoudaoNote",
+  "version": "0.1.1",
+  "description": "YoudaoNote desktop application",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron src/main.js",
+    "pack": "electron-builder --dir",
+    "dist:linux": "electron-builder --linux x64",
+    "dist:deb": "electron-builder --linux deb",
+    "dist:macOS": "electron-builder --mac",
+    "postinstall": "electron-builder install-app-deps",
+    "publish": "build -p always"
+  },
+  "repository": "https://github.com/eNkru/electron-wechat",
+  "keywords": [
+    "Electron",
+    "YoudaoNote",
+    "有道云笔记",
+    "有道云笔记客户端",
+    "有道云笔记桌面"
+  ],
+  "author": "yunfhu <yunfei.hu.19910906@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^4.0.0",
+    "electron-builder": "^20.39.0"
+  },
+  "build": {
+    "appId": "nz.co.enkru.${name}",
+    "linux": {
+      "category": "Network;Utility",
+      "desktop": {
+        "StartupWMClass": "freechat"
+      },
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    }
+  },
+  "dependencies": {
+    "electron-log": "^3.0.6"
+  }
+}
