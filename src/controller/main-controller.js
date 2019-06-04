@@ -34,7 +34,7 @@ class MainController {
             this.changeTitle()
             this.addToggleContactElement()
 
-            this.addUnreadMessageListener()
+            // this.addUnreadMessageListener()
 
             this.show()
         })
@@ -48,12 +48,8 @@ class MainController {
         })
 
         this.window.webContents.on('new-window', this.openInBrowser)
-        // session.defaultSession.webRequest.onCompleted((details) => this.handleRequest(details))
-        // console.log(details.url)
 
         session.defaultSession.webRequest.onCompleted({urls: [
-            // 'https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxinit*',
-            // 'https://wx2.qq.com/cgi-bin/mmwebwx-bin/webwxinit*',
             'https://note.youdao.com/login/acc/se/reset?app=web&product=YNOTE',
             'https://note.youdao.com/editor/collab/bulb.html',
         ]},
@@ -76,33 +72,28 @@ class MainController {
 
     openInBrowser(e, url) {
         e.preventDefault()
-        // if the url start with a wechat redirect url, get the real url, decode and open in external browser
-        let redirectUrl = url
-        if (url.startsWith('https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxcheckurl?requrl=')) {
-            const redirectRegexp = /https:\/\/wx\.qq\.com\/cgi-bin\/mmwebwx-bin\/webwxcheckurl\?requrl=(.*)&skey.*/g
-            redirectUrl = decodeURIComponent(redirectRegexp.exec(url)[1])
-        }
-        shell.openExternal(redirectUrl)
+        shell.openExternal(url)
     }
 
     handleRequest(details) {
-        console.log(details.url)
+        // console.log(details.url)
         details.url.startsWith('https://note.youdao.com/editor/collab/bulb.html') && this.login()
-        // this.login()
         details.url.startsWith('https://note.youdao.com/login/acc/se/reset?app=web&product=YNOTE') && this.logout()
-        // details.url.startsWith('https://wx2.qq.com/?&lang') && this.logout()
-        // this.login()
     }
 
+
     login() {
-        this.window.hide()
-        this.window.setSize(1000, 670, true)
-        this.window.setResizable(true)
-        this.window.show()
+        if (!this.window.isResizable()){
+            this.window.hide()
+            this.window.setSize(1000, 670, true)
+            this.window.setResizable(true)
+            this.window.show()
+        }
     }
 
     logout() {
-        this.window.setSize(380, 500, true)
+        this.window.setSize(600, 1000, true)
+        this.window.setResizable(false)
     }
 
     addFontAwesomeCDN() {
@@ -128,16 +119,6 @@ class MainController {
         `)
     }
 
-    addUnreadMessageListener() {
-        this.window.webContents.executeJavaScript(`
-            new MutationObserver(mutations => {
-                let unread = document.querySelector('.icon.web_wechat_reddot');
-                let unreadImportant = document.querySelector('.icon.web_wechat_reddot_middle');
-                let unreadType = unreadImportant ? 'important' : unread ? 'minor' : 'none';
-                require('electron').ipcRenderer.send('updateUnread', unreadType);
-            }).observe(document.querySelector('.chat_list'), {subtree: true, childList: true});
-        `)
-    }
 
     addToggleContactElement() {
         this.window.webContents.executeJavaScript(`
