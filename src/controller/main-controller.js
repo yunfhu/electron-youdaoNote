@@ -15,7 +15,7 @@ class MainController {
     init() {
         this.window = new BrowserWindow({
             show: false,
-            width: 900,
+            width: 400,
             height: 450,
             frame: true,
             autoHideMenuBar: true,
@@ -126,12 +126,9 @@ class MainController {
 
     reDrawLogin() {
         this.window.webContents.executeJavaScript(`
-          let nav=document.querySelector("body > div.hd > div > div > div")
-          nav.style.cssText = 'visibility: hidden';
-          let login=document.querySelector("body > div.bd > div.login-main")
-          login.style.cssText="margin-top: 0px;"
-        `)
-    }
+          document.querySelector("body > div.bd > div.login-main").style.cssText="width: 400px;margin-top: 0px;box-shadow: white;"
+          document.querySelector("body > div.hd").style.cssText="background-color: #fbfcfe"
+          `)}
 
     changeTitle() {
         this.window.webContents.executeJavaScript(`
