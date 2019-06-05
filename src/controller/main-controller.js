@@ -15,8 +15,8 @@ class MainController {
     init() {
         this.window = new BrowserWindow({
             show: false,
-            width: 1000,
-            height: 600,
+            width: 900,
+            height: 450,
             frame: true,
             autoHideMenuBar: true,
             resizable: false,
@@ -29,7 +29,7 @@ class MainController {
         this.window.webContents.on('dom-ready', () => {
             this.window.webContents.insertCSS(CssInjector.login)
             this.window.webContents.insertCSS(CssInjector.main)
-
+            this.reDrawLogin()
             this.addFontAwesomeCDN()
             this.changeTitle()
             this.addToggleContactElement()
@@ -46,13 +46,32 @@ class MainController {
                 this.window.hide()
             }
         })
+        //mainly for youdao cloud corporation
+        this.window.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+            event.preventDefault()
+            // console.log(url)
+            if (url.startsWith("https://note.youdao.com/group/")) {
+                const win = new BrowserWindow({
+                    webContents: options.webContents, // use existing webContents if provided
+                    autoHideMenuBar: true,
+                    show: false
+                })
+                win.once('ready-to-show', () => win.show())
+                if (!options.webContents) {
+                    win.loadURL(url) // existing webContents will be navigated automatically
+                }
+                event.newGuest = win
+            } else {
+                shell.openExternal(url)
+            }
+        })
 
-        this.window.webContents.on('new-window', this.openInBrowser)
-
-        session.defaultSession.webRequest.onCompleted({urls: [
-            'https://note.youdao.com/login/acc/se/reset?app=web&product=YNOTE',
-            'https://note.youdao.com/editor/collab/bulb.html',
-        ]},
+        session.defaultSession.webRequest.onCompleted({
+            urls: [
+                'https://note.youdao.com/login/acc/se/reset?app=web&product=YNOTE',
+                'https://note.youdao.com/editor/collab/bulb.html',
+            ]
+        },
             (details) => this.handleRequest(details)
         )
     }
@@ -70,10 +89,6 @@ class MainController {
         }
     }
 
-    openInBrowser(e, url) {
-        e.preventDefault()
-        shell.openExternal(url)
-    }
 
     handleRequest(details) {
         // console.log(details.url)
@@ -82,8 +97,9 @@ class MainController {
     }
 
 
+
     login() {
-        if (!this.window.isResizable()){
+        if (!this.window.isResizable()) {
             this.window.hide()
             this.window.setSize(1000, 670, true)
             this.window.setResizable(true)
@@ -92,7 +108,7 @@ class MainController {
     }
 
     logout() {
-        this.window.setSize(600, 1000, true)
+        this.window.setSize(900, 500, true)
         this.window.setResizable(false)
     }
 
@@ -105,6 +121,15 @@ class MainController {
             faLink.integrity = 'sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp';
             faLink.crossOrigin = 'anonymous';
             document.head.appendChild(faLink);
+        `)
+    }
+
+    reDrawLogin() {
+        this.window.webContents.executeJavaScript(`
+          let nav=document.querySelector("body > div.hd > div > div > div")
+          nav.style.cssText = 'visibility: hidden';
+          let login=document.querySelector("body > div.bd > div.login-main")
+          login.style.cssText="margin-top: 0px;"
         `)
     }
 
@@ -130,7 +155,7 @@ class MainController {
             };
             let titleBar = document.querySelector('.header');
             titleBar.appendChild(toggleButton);
-        `)   
+        `)
     }
 }
 
