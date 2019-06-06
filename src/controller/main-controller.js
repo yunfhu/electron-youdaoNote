@@ -29,13 +29,10 @@ class MainController {
         this.window.webContents.on('dom-ready', () => {
             this.window.webContents.insertCSS(CssInjector.login)
             this.window.webContents.insertCSS(CssInjector.main)
-            this.reDrawLogin()
+            this.renderLoginPage()
             this.addFontAwesomeCDN()
             this.changeTitle()
             this.addToggleContactElement()
-
-            // this.addUnreadMessageListener()
-
             this.show()
         })
 
@@ -103,12 +100,14 @@ class MainController {
             this.window.hide()
             this.window.setSize(1000, 670, true)
             this.window.setResizable(true)
+            this.renderMainPage()
             this.window.show()
         }
+
     }
 
     logout() {
-        this.window.setSize(900, 500, true)
+        this.window.setSize(400, 450, true)
         this.window.setResizable(false)
     }
 
@@ -124,18 +123,24 @@ class MainController {
         `)
     }
 
-    reDrawLogin() {
+    renderLoginPage() {
         this.window.webContents.executeJavaScript(`
           document.querySelector("body > div.bd > div.login-main").style.cssText="width: 400px;margin-top: 0px;box-shadow: white;"
-          document.querySelector("body > div.hd").style.cssText="background-color: #fbfcfe"
-          `)}
+          document.querySelector("body > div.hd").style.cssText="background-color: #fbfcfe";
+          `)
+    }
+    renderMainPage() {
+        this.window.webContents.executeJavaScript(`
+            document.querySelector("#flexible-left > div.expand-layout > div.sidebar-ft").style.cssText="visibility: hidden";
+       `)
+    }
 
     changeTitle() {
         this.window.webContents.executeJavaScript(`
-            document.title = '有道运笔记';
+            document.title = '有道云笔记';
             new MutationObserver(mutations => {
-                if (document.title !== '有道运笔记') {
-                    document.title = '有道运笔记';
+                if (document.title !== '有道云笔记') {
+                    document.title = '有道云笔记';
                 }
             }).observe(document.querySelector('title'), {childList: true});
         `)
@@ -143,16 +148,16 @@ class MainController {
 
 
     addToggleContactElement() {
-        this.window.webContents.executeJavaScript(`
-            let toggleButton = document.createElement('i');
-            toggleButton.className = 'toggle_contact_button fas fa-angle-double-left';
-            toggleButton.onclick = () => {
-                toggleButton.classList.toggle('mini');
-                document.querySelector('.panel').classList.toggle('mini');
-            };
-            let titleBar = document.querySelector('.header');
-            titleBar.appendChild(toggleButton);
-        `)
+        // this.window.webContents.executeJavaScript(`
+        //     let toggleButton = document.createElement('i');
+        //     toggleButton.className = 'toggle_contact_button fas fa-angle-double-left';
+        //     toggleButton.onclick = () => {
+        //         toggleButton.classList.toggle('mini');
+        //         document.querySelector('.panel').classList.toggle('mini');
+        //     };
+        //     let titleBar = document.querySelector('.header');
+        //     titleBar.appendChild(toggleButton);
+        // `)
     }
 }
 
